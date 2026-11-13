@@ -3,6 +3,7 @@ import { AppLayout } from './layout/AppLayout'
 import { CartPage } from './pages/CartPage'
 import { CheckoutPage } from './pages/CheckoutPage'
 import { HomePage } from './pages/HomePage'
+import { MePage } from './pages/MePage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { OrderDetailPage } from './pages/OrderDetailPage'
 import { OrdersPage } from './pages/OrdersPage'
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
       { path: '/payment/success', element: <PaymentSuccessPage /> },
       { path: '/payment/fail', element: <PaymentFailPage /> },
       { path: '/orders', element: <OrdersPage /> },
+      { path: '/me', element: <MePage /> },
       { path: '/orders/:orderNumber', element: <OrderDetailPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
