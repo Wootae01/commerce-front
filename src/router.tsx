@@ -4,6 +4,8 @@ import { CartPage } from './pages/CartPage'
 import { CheckoutPage } from './pages/CheckoutPage'
 import { HomePage } from './pages/HomePage'
 import { NotFoundPage } from './pages/NotFoundPage'
+import { OrderDetailPage } from './pages/OrderDetailPage'
+import { OrdersPage } from './pages/OrdersPage'
 import { PaymentFailPage, PaymentSuccessPage } from './pages/PaymentResultPage'
 import { ProductDetailPage } from './pages/ProductDetailPage'
 import { SignInPage } from './pages/SignInPage'
@@ -19,6 +21,8 @@ export const router = createBrowserRouter([
       { path: '/checkout', element: <CheckoutPage /> },
       { path: '/payment/success', element: <PaymentSuccessPage /> },
       { path: '/payment/fail', element: <PaymentFailPage /> },
+      { path: '/orders', element: <OrdersPage /> },
+      { path: '/orders/:orderNumber', element: <OrderDetailPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

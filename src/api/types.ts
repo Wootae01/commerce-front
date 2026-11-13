@@ -130,6 +130,52 @@ export type PaymentResult = {
   failureMessage: string | null
 }
 
+// OrderProductResponseDTO: 주문 목록의 상품 한 줄
+export type OrderSummaryProduct = {
+  id: number
+  productName: string
+  optionName: string | null
+  quantity: number
+  price: number
+  mainImageURL: string
+}
+
+// OrderResponseDTO: 주문 목록의 주문 하나. orderDate는 "2026-11-13T15:20:42"
+export type OrderSummary = {
+  orderNumber: string
+  orderDate: string
+  orderStatus: OrderStatus
+  productDTOS: OrderSummaryProduct[]
+  finalPrice: number
+}
+
+// OrderDetailResponseDTO. paymentInfo.orderStatus는 화면 문구라, 상태 코드는 결제 결과 조회로 받는다
+export type OrderDetail = {
+  orderNumber: string
+  orderDate: string
+  ordererInfo: { name: string | null; phone: string | null; email: string | null }
+  shippingInfo: {
+    receiverName: string
+    receiverPhone: string
+    address: string
+    addressDetail: string | null
+    requestMessage: string | null
+  }
+  paymentInfo: { paymentMethod: string | null; orderStatus: string; failureMessage: string | null }
+  orderItems: OrderItem[]
+  orderPrice: OrderPrice
+}
+
+// CancelResponseDTO. 200이면 CANCELED, 202면 CANCEL_REQUESTED(취소 처리 중)
+export type CancelResult = {
+  orderNumber: string
+  canceledAt: string | null
+  cancelAmount: number
+  refundMethod: string | null
+  errorMessage: string | null
+  orderStatus: OrderStatus
+}
+
 // UserDTO: 내 정보. 주문서 배송지 입력란의 초기값으로도 쓴다
 export type Me = {
   name: string
