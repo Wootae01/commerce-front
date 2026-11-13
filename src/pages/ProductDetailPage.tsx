@@ -1,4 +1,3 @@
-import { Minus, Plus } from 'lucide-react'
 import { useId, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import { ApiError } from '../api/client'
@@ -9,6 +8,7 @@ import { ProductImage } from '../products/ProductImage'
 import { useProductDetail } from '../products/queries'
 import { formatWon } from '../ui/format'
 import { Price } from '../ui/Price'
+import { QuantityStepper } from '../ui/QuantityStepper'
 
 // 이 개수 이하로 남으면 남은 개수를 알려 준다
 const LOW_STOCK = 5
@@ -102,15 +102,18 @@ function ProductView({ product }: { product: ProductDetail }) {
         {soldOut ? (
           <p className="rounded-control bg-shelf px-4 py-3 text-body font-medium">품절된 상품입니다.</p>
         ) : (
-          <QuantityStepper
-            value={quantity}
-            max={maxQuantity}
-            disabled={option === null}
-            onChange={(next) => {
-              setQuantity(next)
-              addToCart.reset()
-            }}
-          />
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-small font-medium">수량</span>
+            <QuantityStepper
+              value={quantity}
+              max={maxQuantity}
+              disabled={option === null}
+              onChange={(next) => {
+                setQuantity(next)
+                addToCart.reset()
+              }}
+            />
+          </div>
         )}
 
         <div className="grid gap-4 border-t border-ink pt-4">
@@ -207,63 +210,6 @@ function OptionPicker({
             </label>
           )
         })}
-      </div>
-    </div>
-  )
-}
-
-function QuantityStepper({
-  value,
-  max,
-  disabled,
-  onChange,
-}: {
-  value: number
-  max: number
-  disabled: boolean
-  onChange: (value: number) => void
-}) {
-  const inputId = useId()
-  const clamp = (n: number) => Math.max(1, Math.min(max, Number.isFinite(n) ? Math.trunc(n) : 1))
-  const buttonClass =
-    'flex size-10 items-center justify-center rounded-control border border-rule disabled:text-rule'
-
-  return (
-    <div className="flex items-center justify-between gap-4">
-      <label htmlFor={inputId} className="text-small font-medium">
-        수량
-      </label>
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          aria-label="수량 줄이기"
-          disabled={disabled || value <= 1}
-          onClick={() => onChange(clamp(value - 1))}
-          className={buttonClass}
-        >
-          <Minus size={16} aria-hidden="true" />
-        </button>
-        <input
-          id={inputId}
-          type="number"
-          inputMode="numeric"
-          aria-label="수량"
-          min={1}
-          max={max}
-          value={value}
-          disabled={disabled}
-          onChange={(event) => onChange(clamp(event.target.valueAsNumber))}
-          className="num h-10 w-14 rounded-control border border-rule text-center font-bold [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
-        />
-        <button
-          type="button"
-          aria-label="수량 늘리기"
-          disabled={disabled || value >= max}
-          onClick={() => onChange(clamp(value + 1))}
-          className={buttonClass}
-        >
-          <Plus size={16} aria-hidden="true" />
-        </button>
       </div>
     </div>
   )
