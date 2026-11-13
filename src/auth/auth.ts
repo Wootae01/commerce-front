@@ -31,3 +31,19 @@ export function useMe() {
 export function loginUrl(returnTo: string) {
   return `/oauth2/authorization/naver?returnTo=${encodeURIComponent(returnTo)}`
 }
+
+// 로그인 화면 주소. Spring의 /login과 겹치지 않게 /signin을 쓴다
+export function signInUrl(returnTo: string) {
+  return `/signin?returnTo=${encodeURIComponent(returnTo)}`
+}
+
+// 백엔드 LoginReturnTo와 같은 규칙. "//host"나 "/\host"는 브라우저가 다른 사이트로 읽으므로 홈으로 바꾼다
+export function safeReturnTo(value: string | null): string {
+  if (!value || !value.startsWith('/') || value.startsWith('//') || value.includes('\\')) {
+    return '/'
+  }
+  if ([...value].some((char) => char.charCodeAt(0) < 0x20 || char.charCodeAt(0) === 0x7f)) {
+    return '/'
+  }
+  return value
+}

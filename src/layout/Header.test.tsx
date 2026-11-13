@@ -16,7 +16,7 @@ function renderAt(path: string) {
   )
 }
 
-test('로그인 전: 로그인 링크가 지금 보던 경로로 돌아오게 한다', async () => {
+test('로그인 전: 로그인 화면으로 가면서 지금 보던 경로를 넘긴다', async () => {
   server.use(
     http.get('/api/users/me', () => HttpResponse.json({ status: 401, message: '로그인이 필요합니다.' }, { status: 401 })),
   )
@@ -24,7 +24,7 @@ test('로그인 전: 로그인 링크가 지금 보던 경로로 돌아오게 �
   renderAt('/products/3')
 
   const login = await screen.findByRole('link', { name: '로그인' })
-  expect(login).toHaveAttribute('href', '/oauth2/authorization/naver?returnTo=%2Fproducts%2F3')
+  expect(login).toHaveAttribute('href', '/signin?returnTo=%2Fproducts%2F3')
   expect(screen.queryByRole('link', { name: '주문내역' })).not.toBeInTheDocument()
 })
 
