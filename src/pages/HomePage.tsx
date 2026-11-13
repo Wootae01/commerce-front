@@ -34,16 +34,35 @@ function FeaturedSection() {
                 <ProductCard key={product.id} product={product} />
               ),
             )}
-            <Link
-              to="/products"
-              className="flex aspect-square items-end bg-ink p-4 text-lead font-bold text-paper hover:underline underline-offset-4"
-            >
-              전체 상품 보기
-            </Link>
+            <AllProductsTile />
           </div>
         )}
       </Loadable>
     </Section>
+  )
+}
+
+// 추천 격자의 마지막 칸. 사진 빠진 상품으로 보이지 않도록 전체 상품 수를 크게 적고, 이름·가격 줄을 두지 않는다
+function AllProductsTile() {
+  const all = useProductSearch({ size: 1 })
+  const total = all.data?.totalElements
+
+  return (
+    <Link
+      to="/products"
+      aria-label={total === undefined ? '전체 상품 보기' : `전체 상품 ${total}개 보기`}
+      className="group flex aspect-square flex-col justify-between bg-ink p-4 text-paper"
+    >
+      <span className="flex items-baseline gap-1">
+        {total !== undefined && (
+          <>
+            <span className="num text-display font-bold leading-none">{total}</span>
+            <span className="text-small">개 상품</span>
+          </>
+        )}
+      </span>
+      <span className="text-lead font-bold group-hover:underline underline-offset-4">전체 상품 보기</span>
+    </Link>
   )
 }
 

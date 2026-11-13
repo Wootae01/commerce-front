@@ -1,6 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../api/client'
-import type { Page, ProductSort, ProductSummary } from '../api/types'
+import type { Page, ProductDetail, ProductSort, ProductSummary } from '../api/types'
+
+export function useProductDetail(id: number) {
+  return useQuery({
+    queryKey: ['products', 'detail', id],
+    queryFn: async () => (await api<ProductDetail>(`/api/products/${id}`)).data,
+    enabled: Number.isInteger(id) && id > 0,
+  })
+}
 
 // 관리자가 고른 메인 노출 상품(순서 있음)
 export function useFeaturedProducts() {
