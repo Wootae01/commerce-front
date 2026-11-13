@@ -51,7 +51,12 @@ export async function api<T = unknown>(path: string, options: ApiOptions = {}): 
 
   const body = await readJson(response)
   if (!response.ok) {
-    throw new ApiError(response.status, messageOf(body) ?? response.statusText, errorsOf(body))
+    // 서버가 메시지를 주지 않으면(게이트웨이 오류 등) HTTP 상태 문구 대신 한국어 안내를 쓴다
+    throw new ApiError(
+      response.status,
+      messageOf(body) ?? `요청을 처리하지 못했습니다. 잠시 뒤 다시 시도해 주세요. (${response.status})`,
+      errorsOf(body),
+    )
   }
   return { status: response.status, data: (body as { data: T } | null)?.data as T }
 }
