@@ -19,6 +19,26 @@ export type ProductSummary = {
   price: number
 }
 
+// ProductOptionDTO: 판매 중인 옵션. 단가 = 상품 가격 + 추가금
+export type ProductOption = {
+  id: number
+  name: string
+  stock: number
+  additionalPrice: number
+}
+
+// ProductDetailDTO
+export type ProductDetail = {
+  id: number
+  name: string
+  price: number
+  mainImageUrl: string
+  // 메인 사진을 뺀 나머지 사진
+  images: string[]
+  description: string | null
+  options: ProductOption[]
+}
+
 // ProductSortType
 export type ProductSort = 'NEWEST' | 'PRICE_ASC' | 'PRICE_DESC' | 'BEST_SELLING'
 
