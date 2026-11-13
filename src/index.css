@@ -1,1 +1,89 @@
 @import "tailwindcss";
+@import "@fontsource-variable/archivo/wdth.css";
+@import "@fontsource/ibm-plex-sans-kr/400.css";
+@import "@fontsource/ibm-plex-sans-kr/500.css";
+@import "@fontsource/ibm-plex-sans-kr/700.css";
+
+/*
+ * 보통상점 디자인 토큰
+ * 흑백과 격자로 조용하게 두고, 가격 숫자만 넓고 굵게 세운다.
+ * 색은 상태를 알릴 때만 쓴다(확인 중 · 실패 · 완료). 장식용 색은 없다.
+ */
+@theme {
+  --color-paper: #ffffff;
+  --color-ink: #000000;
+  --color-graphite: #5e646b;
+  --color-rule: #dadde1;
+  --color-shelf: #edeff1;
+  --color-focus: #2f4bff;
+
+  --color-pending: #8a4b00;
+  --color-pending-bg: #fff3df;
+  --color-danger: #b42318;
+  --color-danger-bg: #fdecea;
+  --color-success: #067647;
+  --color-success-bg: #e7f6ee;
+
+  /* Archivo가 라틴 문자와 숫자를, 한글은 IBM Plex Sans KR이 맡는다 */
+  --font-sans: "Archivo Variable", "IBM Plex Sans KR", system-ui, sans-serif;
+
+  /* The Elements of Typographic Style의 고전 크기 단계에서 고른다 */
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.4;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.5;
+  --text-title: 1.5rem;
+  --text-title--line-height: 1.3;
+  --text-headline: 2.25rem;
+  --text-headline--line-height: 1.15;
+  --text-display: 3rem;
+  --text-display--line-height: 1.05;
+
+  --radius-control: 6px;
+}
+
+@layer base {
+  html {
+    color: var(--color-ink);
+    background: var(--color-paper);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    word-break: keep-all;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* 숫자: 가격·수량·합계. 자릿수가 세로로 맞도록 고정폭 숫자를 쓰고, 넓게 세운다 */
+@utility num {
+  font-variant-numeric: tabular-nums;
+  font-stretch: 112%;
+  letter-spacing: -0.01em;
+}
+
+/* 페이지 가로 폭. 모바일 16px, 넓은 화면 32px 여백 */
+@utility page {
+  width: 100%;
+  max-width: 75rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (width >= 48rem) {
+    padding-inline: 2rem;
+  }
+}
