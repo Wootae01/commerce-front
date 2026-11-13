@@ -60,6 +60,53 @@ export type Cart = {
   productsTotal: number
 }
 
+// OrderType: 장바구니 주문 / 바로구매
+export type OrderType = 'CART' | 'BUY_NOW'
+
+// OrderItemDTO: 주문 상품 한 줄. 장바구니 주문이면 id가 장바구니 상품 id다
+export type OrderItem = {
+  id: number
+  quantity: number
+  unitPrice: number
+  // 상품별 합계(단가 × 수량)
+  lineTotal: number
+  mainImageUrl: string
+  name: string
+  optionName: string | null
+}
+
+// OrderPriceDTO: 결제 금액 = 상품 합계 + 배송비
+export type OrderPrice = {
+  productsTotal: number
+  deliveryFee: number
+  finalPrice: number
+}
+
+// OrderCheckoutResponse: 주문서
+export type Checkout = {
+  orderType: OrderType
+  items: OrderItem[]
+  // 배송지 입력란의 초기값
+  orderer: {
+    name: string | null
+    phone: string | null
+    address: string | null
+    addressDetail: string | null
+    customerKey: string | null
+  }
+  orderPrice: OrderPrice
+  tossClientKey: string
+}
+
+// OrderPrepareResponseDTO: 결제하기를 누르면 만들어진 결제 준비 주문. 이 값으로 토스 결제를 요청한다
+export type PreparedOrder = {
+  orderId: string
+  orderName: string
+  amount: number
+  customerName: string | null
+  customerMobilePhone: string | null
+}
+
 // UserDTO: 내 정보. 주문서 배송지 입력란의 초기값으로도 쓴다
 export type Me = {
   name: string

@@ -75,7 +75,7 @@ describe('오류', () => {
     const error = await api('/api/cart').catch((e: unknown) => e)
 
     expect(error).toBeInstanceOf(ApiError)
-    expect(error).toMatchObject({ status: 502 })
+    expect(error).toMatchObject({ status: 502, message: '요청을 처리하지 못했습니다. 잠시 뒤 다시 시도해 주세요. (502)' })
   })
 })
 
