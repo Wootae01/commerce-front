@@ -15,6 +15,13 @@ function ok<T>(data: T) {
   return HttpResponse.json({ status: 200, data })
 }
 
+function pageOf(content: unknown[], totalElements = content.length) {
+  return ok({ content, page: 0, size: content.length, totalElements, totalPages: 1, hasNext: false })
+}
+
+// 전체 상품 칸이 상품 수를 알려고 부르는 검색. 다른 검색은 각 테스트가 따로 붙인다
+const allProducts = (total: number) => http.get('/api/products', () => pageOf([], total))
+
 function renderHome() {
   return renderWithClient(
     <MemoryRouter>
@@ -27,6 +34,7 @@ test('메인 노출 상품을 순서대로 보여 주고, 상품을 누르면 �
   server.use(
     http.get('/api/products/featured', () => ok([mug, towel])),
     http.get('/api/products/popular', () => ok([board])),
+    allProducts(32),
   )
 
   renderHome()
@@ -40,14 +48,28 @@ test('메인 노출 상품을 순서대로 보여 주고, 상품을 누르면 �
   expect(await screen.findByRole('region', { name: '인기 상품' })).toBeInTheDocument()
 })
 
+test('추천 상품 마지막 칸은 상품이 아니라 전체 상품 수와 함께 전체 목록으로 가는 칸이다', async () => {
+  server.use(
+    http.get('/api/products/featured', () => ok([mug])),
+    http.get('/api/products/popular', () => ok([board])),
+    allProducts(32),
+  )
+
+  renderHome()
+
+  const tile = await screen.findByRole('link', { name: '전체 상품 32개 보기' })
+  expect(tile).toHaveAttribute('href', '/products')
+  expect(within(tile).getByText('32')).toBeInTheDocument()
+})
+
 test('인기 상품이 아직 없으면 새로 들어온 상품을 대신 보여 준다', async () => {
-  let newestQuery = ''
+  const searches: string[] = []
   server.use(
     http.get('/api/products/featured', () => ok([mug])),
     http.get('/api/products/popular', () => ok([])),
     http.get('/api/products', ({ request }) => {
-      newestQuery = new URL(request.url).search
-      return ok({ content: [board], page: 0, size: 8, totalElements: 1, totalPages: 1, hasNext: false })
+      searches.push(new URL(request.url).search)
+      return pageOf([board])
     }),
   )
 
@@ -55,7 +77,7 @@ test('인기 상품이 아직 없으면 새로 들어온 상품을 대신 보여
 
   const newest = await screen.findByRole('region', { name: '새로 들어온 상품' })
   expect(await within(newest).findByText('대나무 도마')).toBeInTheDocument()
-  expect(newestQuery).toContain('sortType=NEWEST')
+  expect(searches).toContain('?sortType=NEWEST&size=8')
   expect(screen.queryByRole('region', { name: '인기 상품' })).not.toBeInTheDocument()
 })
 
@@ -67,6 +89,7 @@ test('불러오지 못하면 다시 시도할 수 있다', async () => {
       return featuredCalls === 1 ? new HttpResponse(null, { status: 500 }) : ok([mug])
     }),
     http.get('/api/products/popular', () => ok([board])),
+    allProducts(32),
   )
 
   renderHome()
