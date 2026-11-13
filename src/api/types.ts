@@ -107,6 +107,29 @@ export type PreparedOrder = {
   customerMobilePhone: string | null
 }
 
+// OrderStatus
+export type OrderStatus =
+  | 'READY'
+  | 'PAYMENT_PENDING'
+  | 'PAYMENT_FAILED'
+  | 'PAID'
+  | 'PREPARING'
+  | 'SHIPPING'
+  | 'CANCEL_REQUESTED'
+  | 'CANCELED'
+  | 'DELIVERED'
+
+// PaySuccessDTO: 결제 결과. PAYMENT_PENDING이면 결과 모름, PAYMENT_FAILED면 failureMessage가 실패 이유
+export type PaymentResult = {
+  orderNumber: string
+  amount: number
+  method: string | null
+  // 화면 표시용 문자열(2026-11-13 15:20:42)
+  approvedAt: string | null
+  orderStatus: OrderStatus
+  failureMessage: string | null
+}
+
 // UserDTO: 내 정보. 주문서 배송지 입력란의 초기값으로도 쓴다
 export type Me = {
   name: string
