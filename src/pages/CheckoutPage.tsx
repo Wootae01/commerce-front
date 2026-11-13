@@ -6,6 +6,7 @@ import type { Checkout, PreparedOrder } from '../api/types'
 import { signInUrl, useMe } from '../auth/auth'
 import { isUserCancel, mountPaymentWidget, type PaymentWidget } from '../payment/tossWidget'
 import { ProductImage } from '../products/ProductImage'
+import { Field } from '../ui/Field'
 import { formatWon } from '../ui/format'
 import { Price } from '../ui/Price'
 
@@ -300,51 +301,6 @@ function CheckoutForm({
         )}
       </aside>
     </form>
-  )
-}
-
-function Field({
-  label,
-  value,
-  error,
-  onChange,
-  type = 'text',
-  ...input
-}: {
-  label: string
-  value: string
-  error?: string
-  onChange: (value: string) => void
-  type?: string
-  inputMode?: 'numeric'
-  autoComplete?: string
-  placeholder?: string
-}) {
-  const id = useId()
-  const errorId = `${id}-error`
-  return (
-    <div className="grid gap-1.5">
-      <label htmlFor={id} className="text-small font-medium">
-        {label}
-      </label>
-      <input
-        id={id}
-        type={type}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={error ? errorId : undefined}
-        className={`h-11 rounded-control border px-3 text-body outline-none focus:border-ink ${
-          error ? 'border-danger' : 'border-rule'
-        }`}
-        {...input}
-      />
-      {error && (
-        <p id={errorId} className="text-small text-danger">
-          {error}
-        </p>
-      )}
-    </div>
   )
 }
 

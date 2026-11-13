@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router'
 import { api, ApiError } from '../api/client'
 import type { Me } from '../api/types'
 
@@ -46,4 +47,17 @@ export function safeReturnTo(value: string | null): string {
     return '/'
   }
   return value
+}
+
+// 로그아웃: 백엔드 세션을 끝내고 홈으로 간다. 장바구니·주문 같은 사용자 데이터 캐시는 모두 버리고 로그아웃 상태로 둔다
+export function useLogout() {
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
+  return async () => {
+    await api('/api/logout', { method: 'POST' })
+    // 먼저 홈으로 옮겨야 로그인이 필요한 화면이 로그아웃 상태를 보고 로그인 화면으로 보내지 않는다
+    navigate('/', { replace: true })
+    queryClient.removeQueries()
+    queryClient.setQueryData(meQueryKey, null)
+  }
 }
