@@ -1,7 +1,7 @@
 import { Search, ShoppingBag } from 'lucide-react'
 import type { FormEvent } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
-import { loginUrl, useMe } from '../auth/auth'
+import { signInUrl, useMe } from '../auth/auth'
 import { useCart } from '../cart/useCart'
 import { SHOP_NAME } from '../shop'
 
@@ -76,9 +76,9 @@ function AccountLinks() {
           <CartLink />
         </>
       ) : (
-        <a href={loginUrl(location.pathname + location.search)} className={linkClass}>
+        <Link to={signInUrl(location.pathname + location.search)} className={linkClass}>
           로그인
-        </a>
+        </Link>
       )}
     </nav>
   )
