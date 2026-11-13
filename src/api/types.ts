@@ -10,6 +10,18 @@ export type Page<T> = {
   hasNext: boolean
 }
 
+// ProductHomeDTO: 목록에 보이는 상품 하나
+export type ProductSummary = {
+  id: number
+  // 사진이 없으면 기본 이미지 경로(/images/default.png)
+  mainImageUrl: string
+  name: string
+  price: number
+}
+
+// ProductSortType
+export type ProductSort = 'NEWEST' | 'PRICE_ASC' | 'PRICE_DESC' | 'BEST_SELLING'
+
 // CartProductDTO: 장바구니에 담긴 상품 한 줄
 export type CartItem = {
   id: number
