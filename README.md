@@ -18,6 +18,13 @@ npm install
 npm run dev   # http://localhost:5173
 ```
 
+백엔드가 다른 주소에 떠 있으면(예: Docker 블루그린의 green은 8082) `BACKEND_URL`로 바꾼다. 셸 환경변수나 `.env.local`(git에 안 올라감)에 둔다.
+
+```bash
+BACKEND_URL=http://localhost:8082 npm run dev          # bash
+$env:BACKEND_URL="http://localhost:8082"; npm run dev  # PowerShell
+```
+
 Vite 개발 서버가 `/api`, `/oauth2`, `/login/oauth2`, `/logout`, `/uploads`, `/images`를 백엔드로 넘긴다. 배포 사이트와 같은 출처로 보이게 하려는 것으로, 이유는 백엔드 `docs/adr/0001-react-owns-user-screen-urls.md`에 있다.
 
 ## 스크립트

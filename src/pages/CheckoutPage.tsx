@@ -132,8 +132,11 @@ function CheckoutForm({
         mounted = created
         widget.current = created
       })
-      .catch(() => {
-        if (!cancelled) setWidgetFailed(true)
+      .catch((error: unknown) => {
+        if (cancelled) return
+        // 화면에는 안내 문구만 보이므로, 원인을 찾을 수 있게 토스가 준 오류를 콘솔에 남긴다
+        console.error('[checkout] 결제위젯을 그리지 못했습니다', error)
+        setWidgetFailed(true)
       })
     return () => {
       cancelled = true
