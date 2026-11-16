@@ -27,19 +27,43 @@ type MountOptions = {
 export const PAYMENT_SUCCESS_PATH = '/payment/success'
 export const PAYMENT_FAIL_PATH = '/payment/fail'
 
-export async function mountPaymentWidget(options: MountOptions): Promise<PaymentWidget> {
-  const tossPayments = await loadTossPayments(options.clientKey)
-  const widgets = tossPayments.widgets({ customerKey: options.customerKey ?? ANONYMOUS })
+// 토스는 한 페이지에 결제수단 위젯을 하나만 허용한다. 앞 위젯이 아직 그려지는 중이거나 지워지기 전에 새로 그리면
+// "하나의 결제수단 위젯만을 사용할 수 있어요." 오류가 난다(개발 모드에서 effect가 두 번 실행될 때 실제로 남).
+// 그래서 앞 위젯이 실패하거나 destroy가 끝날 때까지 기다렸다가 그린다. 그린 위젯은 반드시 destroy해야 다음 위젯이 그려진다
+let previousReleased: Promise<void> = Promise.resolve()
 
-  await widgets.setAmount({ currency: 'KRW', value: options.amount })
-  const [methods, agreement] = await Promise.all([
-    widgets.renderPaymentMethods({ selector: options.methodsSelector }),
-    widgets.renderAgreement({ selector: options.agreementSelector }),
-  ])
+export async function mountPaymentWidget(options: MountOptions): Promise<PaymentWidget> {
+  const waitForPrevious = previousReleased
+  let release!: () => void
+  previousReleased = new Promise((resolve) => {
+    release = resolve
+  })
+
+  let methods: { destroy: () => Promise<void> }
+  let agreement: { destroy: () => Promise<void> }
+  let widgets: ReturnType<Awaited<ReturnType<typeof loadTossPayments>>['widgets']>
+  try {
+    await waitForPrevious
+    const tossPayments = await loadTossPayments(options.clientKey)
+    widgets = tossPayments.widgets({ customerKey: options.customerKey ?? ANONYMOUS })
+
+    await widgets.setAmount({ currency: 'KRW', value: options.amount })
+    ;[methods, agreement] = await Promise.all([
+      widgets.renderPaymentMethods({ selector: options.methodsSelector }),
+      widgets.renderAgreement({ selector: options.agreementSelector }),
+    ])
+  } catch (error) {
+    release()
+    throw error
+  }
 
   return {
     destroy: async () => {
-      await Promise.all([methods.destroy(), agreement.destroy()])
+      try {
+        await Promise.all([methods.destroy(), agreement.destroy()])
+      } finally {
+        release()
+      }
     },
     setAmount: (value) => widgets.setAmount({ currency: 'KRW', value }),
     requestPayment: ({ customerName, customerMobilePhone, ...order }) =>
